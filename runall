@@ -1,1 +1,8 @@
-for i in {0..9}; do ./ikaros -b$i Workspace/brain.ikc ; cp Workspace/out.txt Out/$i.txt;done
+#!/bin/bash
+
+for i in {1..9}; do 
+	./ikaros -b$i Workspace/brain.ikc
+	cp Workspace/out.txt Out/$i.txt
+done
+
+rm Workspace/out.txt
