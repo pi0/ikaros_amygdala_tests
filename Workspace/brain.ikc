@@ -127,7 +127,7 @@
 
 	
 
-	<module name="OUT" class="OutputFile" filename="out.txt" decimals="3">
+	<module name="OUT" class="OutputFile" filename="out.txt" decimals="5">
 		<column name="CR"/>
 		<column name="CS"/>
 		<column name="US"/>
