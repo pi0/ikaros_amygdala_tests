@@ -2,7 +2,8 @@
 
 for i in {1..9}; do 
 	./ikaros -b$i Workspace/brain.ikc
-	cp Workspace/out.txt Out/$i.txt
+	echo "sep=;" > Out/$i.csv
+	cat Workspace/out.txt | sed 's/\t/;/g;s/$/\r/g' >> Out/$i.csv
 done
 
 rm Workspace/out.txt
