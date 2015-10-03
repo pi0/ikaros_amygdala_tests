@@ -1,0 +1,452 @@
+<group name="Group-0" title="Morén's 2002 Amygdala model">
+
+    <batch target="filename" values="AcquisitionExtinction/input.txt
+                Blocking/input.txt
+                ConditionedInhibition/input.txt
+                Discrimination/input.txt
+                Disinhibition/input.txt
+                Disinhibition2/input.txt
+                NegativePatterning/input.txt
+                PositivePatterning/input.txt
+                SFPD/input.txt"/>
+
+	<group class="InputFile" name="Stimuli" description="reads a text file">
+
+	<description type="text">
+		<p>
+			Module used for reading numerical input data from a text file. The data is represented in the file as a number of columns given names in a header. Each set of columns will be available as an output vector from the module with the same name as the columns.
+		</p>
+		<p>
+			The following example shows how the header describes the number of columns in each output vector and its name:
+		</p>
+		<pre>
+  X/2 Y/3
+  10   2.0    12     5     8
+   2    31   5.4    10     1
+   :
+   :
+</pre>
+		<p>
+			The first output will get the name "X" and consists of two values while the second output will be called "Y" and contain three elements. Each row in the file corresponds to the output from an InputFile module at each time step.
+		</p>
+		<p>
+			Comments can be added in the data file after a hash sign (#) as in the following example:
+		</p>
+		<pre>
+ # This is a comment; this line will be ignored in the input
+   X/2 Y/3
+  10   2.0    12     5     8	# This is also a comment
+   2    31   5.4    10     1	# and this
+   :
+   :
+</pre>		
+		<p>
+			Blank lines in the file are skipped. When the whole file has been read, the module send an end-of-file signal to the IKAROS kernel that will stop the execution. This is useful in off-line simulations.
+		</p>
+		<p>
+			InputFile can read files using any of the three popular line terminators: CR, LF, or CR+LF.
+		</p>
+	</description>
+
+	<example description="Example">
+		<module class="InputFile" name="InputFile" filename="data.txt"/>
+	</example>
+
+	<parameter name="filename" type="string" description="File to read the data from"/>
+	<parameter name="iterations" type="int" deafult="1" description="Number of times to iterate the files"/>
+	<parameter name="extend" type="int" default="0" description="Number of additional time steps to run before the module sends the end-of-file signal to the IKAROS kernel. This attribute is used to allow the data in the input file to propagate through the network of modules before the execution is terminated."/>
+	<parameter name="print_iteration" type="bool" default="no" description="Print the iteration number to standard out"/>
+
+	<output name="*" description="The outputs generated from columns in the file."/>
+
+	<module class="InputFile"/>
+
+	<limitation>
+		It is not possible to loop the data file indefinitely.
+	</limitation>
+	
+	<author>
+		<name>Christian Balkenius</name>
+		<email>christian.balkenius@lucs.lu.se</email>
+		<affiliation>Lund University Cognitive Science</affiliation>
+		<homepage>http://www.lucs.lu.se/Christian.Balkenius</homepage>
+	</author>
+
+	<created>2001</created>
+	
+   <files>
+   		<file>InputFile.h</file>
+   		<file>InputFile.cc</file>
+   		<file>InputFile.ikc</file>
+   </files>
+
+</group>
+
+	<group class="M02_Thalamus" name="Thalamus" description="a thalamus model">
+
+<description type="text">
+The module implements the thalamus model described in the PhD thesis by Jan Morén 2002.
+</description>
+
+<example description="A simple example">
+<module class="M02_Thalamus" name="Thalamus"/>
+</example>
+
+<input name="INPUT" description="The conditioned stimulus input"/>
+
+<output name="OUTPUT" size_set="INPUT" description="The output to cortex"/>
+
+<output name="TH" size="1" description="The thalamic output"/>
+
+<module class="M02_Thalamus"/>
+
+<author>
+<name>Jan Moren</name>
+<email>jan.moren@lucs.lu.se</email>
+<affiliation>Lund Univeristy Cognitive Science</affiliation>
+<homepage>http://www.lucs.lu.se/Jan.Moren/</homepage>
+</author>
+
+<reference>
+Morén, J. (2002) Emotional Learning: A Computational Model of the Amygdala. Lund Univeristy Cognitive Studies, 93.
+</reference>
+
+<files>
+<file>M02_Amygdala.h</file>
+<file>M02_Amygdala.cc</file>
+<file>M02_Amygdala.ikc</file>
+</files>
+
+</group>
+
+	<group class="M02_SensoryCortex" name="Cortex" description="a (naive) cortex model">
+
+<description type="text">
+The module implements the cortex model described in the PhD thesis by Jan Morén 2002.
+</description>
+
+<example description="A simple example">
+<module class="M02_SensoryCortex" name="SensoryCortex"/>
+</example>
+
+<input name="INPUT" description="The cortex input"/>
+
+
+<output name="OUTPUT" size_set="INPUT" description="The cortex output"/>
+
+<module class="M02_SensoryCortex"/>
+
+<author>
+<name>Jan Moren</name>
+<email>jan.moren@lucs.lu.se</email>
+<affiliation>Lund Univeristy Cognitive Science</affiliation>
+<homepage>http://www.lucs.lu.se/Jan.Moren/</homepage>
+</author>
+
+<files>
+<file>M02_SensoryCortex.h</file>
+<file>M02_SensoryCortex.cc</file>
+<file>M02_SensoryCortex.ikc</file>
+</files>
+
+</group>
+
+	<group alpha="0.2" class="M02_Amygdala" name="AMY" description="an amygdala model">
+
+<description type="text">
+The module implements the model of the amygdala cortex described in the PhD thesis by Jan Morén 2002.
+</description>
+
+<example description="A simple example">
+<module class="M02_Amygdala" name="Amygdala" alpha="0.2"/>
+</example>
+
+<parameter name="alpha" type="float" default="0.2" description="The learning rate"/>
+
+<input name="INPUT" description="The conditioned stimulus input"/>
+
+<input name="EO" description="The input from the orbitofrontal cortex"/>
+
+<input name="Rew" description="The reward input"/>
+
+<output name="A" size_set="INPUT" description="The activity nodes; output to the orbitofrontal cortex"/>
+
+<output name="E" size="1" description="The emotional reaction"/>
+
+<output name="V" size_set="INPUT" description="The weight output for visualization"/>
+
+<module class="M02_Amygdala"/>
+
+<author>
+<name>Jan Moren</name>
+<email>jan.moren@lucs.lu.se</email>
+<affiliation>Lund Univeristy Cognitive Science</affiliation>
+<homepage>http://www.lucs.lu.se/Jan.Moren/</homepage>
+</author>
+
+<reference>
+Morén, J. (2002) Emotional Learning: A Computational Model of the Amygdala. Lund Univeristy Cognitive Studies, 93.
+</reference>
+
+<files>
+<file>M02_Amygdala.h</file>
+<file>M02_Amygdala.cc</file>
+<file>M02_Amygdala.ikc</file>
+</files>
+
+</group>
+
+	<group beta="0.2" class="M02_OFC" name="OFC" description="an model of orbitofrontal cortex">
+
+<description type="text">
+The module implements the model of the orbitofrontal cortex described in the PhD thesis by Jan Morén 2002.
+</description>
+
+<example description="A simple example">
+<module class="M02_OFC" name="OFC" beta="0.2"/>
+</example>
+
+<parameter name="beta" type="float" default="0.2" description="The learning rate"/>
+
+<input name="INPUT" description="The stimulus input"/>
+
+<input name="A" description="The input from the amygdala"/>
+
+<input name="CON" description="The context input"/>
+
+<input name="Rew" description="The reward input"/>
+
+<output name="EO" size="1" description="The inhibitory output to the amygdala"/>
+
+<output name="W" description="The weights"/>
+
+<module class="M02_OFC"/>
+
+<author>
+<name>Jan Moren</name>
+<email>jan.moren@lucs.lu.se</email>
+<affiliation>Lund Univeristy Cognitive Science</affiliation>
+<homepage>http://www.lucs.lu.se/Jan.Moren/</homepage>
+</author>
+
+<reference>
+Morén, J. (2002) Emotional Learning: A Computational Model of the Amygdala. Lund Univeristy Cognitive Studies, 93.
+</reference>
+
+<files>
+<file>M02_OFC.h</file>
+<file>M02_OFC.cc</file>
+<file>M02_OFC.ikc</file>
+</files>
+
+</group>
+
+	<group class="M02_Hippocampus" name="HIPP" description="a hippocampus model">
+
+<description type="text">
+The module implements the model of context processing described in the PhD thesis by Jan Morén 2002.
+The model was originally published by Balkenius and Morén in 2000.
+</description>
+
+<example description="A simple example">
+<module class="M02_Hippocampus" name="Hippocampus"/>
+</example>
+
+<parameter name="bindsize" type="int" default="4" description="The bind size"/>
+
+<parameter name="contextsize" type="int" default="4" description="The contex size"/>
+
+<input name="STIMULUS" description="The observed stimulus"/>
+
+<input name="LOCATION" description="The observed location"/>
+
+<output name="BIND" size_param="bindsize" description="The output of the bind layer"/>
+
+<output name="BIND_DELTA" size_param="bindsize" description="The positive edge of the bind layer"/>
+
+<output name="CONTEXT" size_param="contextsize" description="The current context"/>
+
+<output name="RESET" size="1" description="The reset output"/>
+
+<module class="M02_Hippocampus"/>
+
+<author>
+<name>Christian Balkenius</name>
+<email>christian.balkenius@lucs.lu.se</email>
+<affiliation>Lund Univeristy Cognitive Science</affiliation>
+<homepage>http://www.lucs.lu.se/Christian.Balkenius/</homepage>
+</author>
+
+<author>
+<name>Jan Moren</name>
+<email>jan.moren@lucs.lu.se</email>
+<affiliation>Lund Univeristy Cognitive Science</affiliation>
+<homepage>http://www.lucs.lu.se/Jan.Moren/</homepage>
+</author>
+
+<reference>
+Morén, J. (2002) Emotional Learning: A Computational Model of the Amygdala. Lund Univeristy Cognitive Studies, 93.
+</reference>
+
+<reference>
+Balkenius, C. and Morén, J. (2000) A Computational Model of Context Processing. In Jean-Arcady Meyer, Alain Berthoz,
+Dario Floreano, Herbert L. Roitblat, Stewart W. Wilson, (Eds) From Animals to Animats 6:  Proceedings of the 6th
+International Conference on the Simulation of Adaptive Behaviour, Cambridge, MA. The MIT Press.
+</reference>
+
+<files>
+<file>M02_Hippocampus.h</file>
+<file>M02_Hippocampus.cc</file>
+<file>M02_Hippocampus.ikc</file>
+</files>
+
+</group>
+
+	<connection sourcemodule="Stimuli" source="CS" targetmodule="Thalamus" target="INPUT"/>
+
+	<connection sourcemodule="Thalamus" source="OUTPUT" targetmodule="Cortex" target="INPUT"/>
+
+	<connection sourcemodule="Thalamus" source="TH" targetmodule="AMY" target="INPUT"/>
+
+	<connection sourcemodule="Cortex" source="OUTPUT" targetmodule="AMY" target="INPUT"/>
+
+	<connection sourcemodule="Stimuli" source="R" targetmodule="AMY" target="Rew" delay="3"/>
+
+	<connection sourcemodule="Cortex" source="OUTPUT" targetmodule="OFC" target="INPUT"/>
+
+	<connection sourcemodule="Stimuli" source="R" targetmodule="OFC" target="Rew" delay="3"/>
+
+	<connection sourcemodule="AMY" source="A" targetmodule="OFC" target="A"/>
+
+	<connection sourcemodule="OFC" source="EO" targetmodule="AMY" target="EO"/>
+
+	<connection sourcemodule="Stimuli" source="CS" targetmodule="HIPP" target="STIMULUS"/>
+
+	<connection sourcemodule="Stimuli" source="LOC" targetmodule="HIPP" target="LOCATION"/>
+
+	<group decimals="3" filename="out.txt" class="OutputFile" name="OUT" description="generates a text file">
+
+	<description type="xhtml">
+		<p>
+			Module used for writing numerical data to a text file. The data is represented in the
+			file as a number of columns given names in a header. The first column is called "T"
+			and contains the time (in ticks) when the row was written. All other columns in the
+			output file are defined in the XML file.
+		</p>
+		<h2>
+			Example XML definitions
+		</h2>
+		<pre>
+  &lt;module
+    class = "OutputFile"
+    name = "OUT"
+    filename = "data.txt"
+  &gt;
+    &lt;column name = "X" /&gt;  
+    &lt;column name = "Y" /&gt;  
+  &lt;/module&gt;
+</pre>
+		<p>
+			The following example shows how the header describes the number of'
+			columns in each output column and its name. The file could have been
+			produced by the above module definition if the input vector to "X" had one
+			value and the input to "Y" had two values.
+		</p>
+		<pre class="textfile">
+  T/1  X/1       Y/2
+  0     2.0000   12.0000     5.0102
+  1    31.0000    5.4000    10.4321
+   :
+   :
+</pre>
+		<p>
+			As default there are four decimals in each column. This can be changed with the decimals attribute:
+		</p>
+		<pre>
+  &lt;module
+    class = "OutputFile"
+    name = "OUT"
+    filename = "data.txt"
+    decimals = "0"
+  &gt;
+    &lt;column name = "X" /&gt;  
+    &lt;column name = "Y" decimals = "2" /&gt;  
+  &lt;/module&gt;
+</pre>
+		<p>
+			Here, the attribute decimals in the module tag sets the default decimals to none for all columns. This is changed locally for column Y where 2 decimals are used. The example above will now become:
+		</p>
+		<pre class="textfile">
+  T/1  X/1  Y/2
+  0     2   12.00     5.01
+  1    31    5.40    10.43
+   :
+   :
+</pre>
+	</description>
+
+	<example description="Example">
+		<module class="OutputFile" name="OutputFile" filename="data.txt">
+			<column name="X"/>  
+			<column name="Y"/>  
+		</module>
+	</example>
+
+	<parameter name="filename" type="string" description="File to write the data to"/>
+	<parameter name="decimals" type="int" default="0" description="Number of decimals for all columns"/>
+
+	<parameter name="column" type="element" description="Definition of a column in the output file; name attribute sets the name of the column; decimals sets the number decimals of this column"/>
+
+	<input name="*" description="The module can have any number of inputs; each will generate a column in the output"/>
+
+	<module class="OutputFile"/>
+
+	<limitation>
+		It should be possible to supress the timing column "T".
+	</limitation>
+	
+	<created>2002</created>
+	
+	<author>
+		<name>Christian Balkenius</name>
+		<email>christian.balkenius@lucs.lu.se</email>
+		<affiliation>Lund University Cognitive Science</affiliation>
+		<homepage>http://www.lucs.lu.se/Christian.Balkenius</homepage>
+	</author>
+
+   <files>
+   		<file>OutputFile.h</file>
+   		<file>OutputFile.cc</file>
+   		<file>OutputFile.ikc</file>
+   </files>
+
+</group>
+	
+    <view name="Emotion" object_size="70">
+	
+        <object title="CR" class="Plot" module="AMY" color="purple" source="E" x="0" y="0" w="3"/>
+        
+		<object title="CS" class="Plot" module="Stimuli" select="0,1,2,3" color="green,purple,red,blue" source="CS" x="0" y="1" w="3"/>
+		<object title="CS0" class="Plot" module="Stimuli" source="CS" select="0" x="0" y="2" w="3"/>
+        <object title="CS1" class="Plot" module="Stimuli" source="CS" select="1" x="0" y="3" w="3"/>
+        <object title="CS2" class="Plot" module="Stimuli" source="CS" select="2" x="0" y="4" w="3"/>
+		
+        <object title="US" class="Plot" module="Stimuli" source="R" x="0" y="5" w="3"/>
+
+        <object title="Cortex" class="Plot" module="Cortex" source="OUTPUT" x="3" y="0" w="3"/>
+        <object title="Thalamus" class="Plot" module="Thalamus" source="OUTPUT" x="3" y="1" w="3"/>
+        <object title="Hippocampus.BindDelta" class="Plot" module="HIPP" source="BIND_DELTA" select="0,1,2,3" color="green,purple,red,blue" x="3" y="2" w="3"/>
+        <object title="Hippocampus.Context" class="Plot" module="HIPP" source="CONTEXT" select="0,1,2,3" color="green,purple,red,blue" x="3" y="3" w="3"/>
+
+		
+        <object title="V" class="Plot" module="AMY" source="V" x="6" y="0" w="3"/>
+		<object title="V1" class="Plot" module="AMY" source="V" select="0" x="6" y="1" w="3"/>
+		<object title="V2" class="Plot" module="AMY" source="V" select="1" x="6" y="2" w="3"/>
+		
+        <object title="W" class="Plot" module="OFC" source="W" x="6" y="3" w="3"/>
+		<object title="W1" class="Plot" module="OFC" source="W" select="0" x="6" y="4" w="3"/>
+		<object title="W2" class="Plot" module="OFC" source="W" select="0" x="6" y="5" w="3"/>
+		
+    </view>
+
+</group>
